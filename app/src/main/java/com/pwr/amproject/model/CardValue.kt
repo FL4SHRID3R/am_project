@@ -1,4 +1,4 @@
-package com.pwr.amproject.definitions
+package com.pwr.amproject.model
 
 enum class CardValue {
     TWO,
