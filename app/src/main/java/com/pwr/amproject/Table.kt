@@ -5,23 +5,42 @@ import com.pwr.amproject.model.Hand
 import com.pwr.amproject.model.Player
 
 class Table {
-    private lateinit var players: MutableMap<Player, Hand>
+    private lateinit var players: MutableList<Player>
+    private lateinit var hands: MutableList<Hand>
+
     private val smallBlind: Int
     private val bigBlind: Int
+    private val deck: Deck
+    private val betingRound: Int = 0
 
-    private val deck : Deck
+    private var dealerId: Int = 0
+    private var smallBlindId: Int = 1
+    private var bigBlindId: Int = 2
 
-    constructor(smallBlind: Int, bigBlind: Int, deck: Deck) {
+    constructor(players: MutableList<Player>, smallBlind: Int, bigBlind: Int, deck: Deck) {
+        this.players = players
         this.smallBlind = smallBlind
         this.bigBlind = bigBlind
         this.deck = deck
     }
 
     fun clearTable() {
-        players = HashMap()
+        hands = ArrayList(players.size)
+    }
+
+    fun dealNewHands() {
+        hands.forEach { hand -> hand.firstCard = deck.draw() }
+        hands.forEach { hand -> hand.secondCard = deck.draw() }
+    }
+
+    fun increaseIds() {
+        dealerId += 1
+        smallBlindId += 1
+        bigBlindId += 1
     }
 
     fun setPlayerHand(player: Player, hand: Hand) {
-        players[player] = hand
+        players.add(player)
+        hands.add(hand)
     }
 }
