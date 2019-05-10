@@ -1,6 +1,8 @@
 package com.pwr.amproject.model
 
-abstract class Player(money: Long) {
+import java.io.Serializable
+
+abstract class Player(money: Long): Serializable {
     var money: Long = money
 
     abstract fun fold()
