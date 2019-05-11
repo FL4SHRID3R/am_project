@@ -5,7 +5,7 @@ import com.pwr.amproject.model.Hand
 import com.pwr.amproject.model.Player
 
 class Table {
-    private lateinit var players: MutableList<Player>
+    private var players: MutableList<Player>
     private lateinit var hands: MutableList<Hand>
 
     private val smallBlind: Int
@@ -14,8 +14,6 @@ class Table {
     private val betingRound: Int = 0
 
     private var dealerId: Int = 0
-    private var smallBlindId: Int = 1
-    private var bigBlindId: Int = 2
 
     constructor(players: MutableList<Player>, smallBlind: Int, bigBlind: Int, deck: Deck) {
         this.players = players
@@ -34,9 +32,7 @@ class Table {
     }
 
     fun increaseIds() {
-        dealerId += 1
-        smallBlindId += 1
-        bigBlindId += 1
+        dealerId = (dealerId + 1)%players.size
     }
 
     fun setPlayerHand(player: Player, hand: Hand) {
