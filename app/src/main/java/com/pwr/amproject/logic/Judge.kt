@@ -20,7 +20,6 @@ class Judge {
                 highestRank = it.value
             }
         }
-        println(highestRank)
         playerHands.forEach { println("${it.key} ${it.value}") }
         playerHands.forEach { if (it.value == highestRank) return it.key }
 

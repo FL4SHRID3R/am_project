@@ -12,15 +12,6 @@ class HandComparer {
 
         val toCompare: List<Card> = sortCardsByValue(toSort)
 
-        println(
-            "=========================================================================\n" +
-                    "By value: $toCompare"
-        )
-        println(
-            "By color: ${sortCardsByColour(toCompare)}\n" +
-                    "========================================================================="
-        )
-
         return if (toCompare.size < 5) HandRanks.HIGH_CARD
         else if (isRoyalFlush(toCompare)) HandRanks.ROYAL_FLUSH
         else if (isStraightFlush(toCompare)) HandRanks.STRAIGHT_FLUSH
