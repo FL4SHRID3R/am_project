@@ -101,6 +101,8 @@ class Judge {
                     finalBestPlayers.add(bestPlayers[i])
                 }
             }
+        } else {
+            finalBestPlayers = bestPlayers
         }
         return finalBestPlayers.toList()
     }

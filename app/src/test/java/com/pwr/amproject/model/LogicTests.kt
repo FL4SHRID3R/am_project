@@ -26,13 +26,26 @@ class LogicTests {
         println("On table:")
         table.forEach { println("$it") }
 
-        val hands: MutableMap<Int, Hand> = getHands(listOf(14, 16, 27, 18, 39, 11))
+        var hands: MutableMap<Int, Hand> = getHands(listOf(14, 16, 27, 18, 31, 40))
 
         println("\nIn hands:")
         hands.forEach { println("Player ${it.key} with hand ${it.value}") }
 
         println("\nWon: ${judge.findBestPlayers(hands.toMap(), table)}")
 
+        hands = getHands(listOf(14, 16, 27, 18, 39, 44))
+
+        println("\nIn hands:")
+        hands.forEach { println("Player ${it.key} with hand ${it.value}") }
+
+        println("\nWon: ${judge.findBestPlayers(hands.toMap(), table)}")
+
+        hands = getHands(listOf(14, 16, 27, 18, 37, 40))
+
+        println("\nIn hands:")
+        hands.forEach { println("Player ${it.key} with hand ${it.value}") }
+
+        println("\nWon: ${judge.findBestPlayers(hands.toMap(), table)}")
     }
 
     /**
