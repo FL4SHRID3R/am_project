@@ -2,7 +2,7 @@ package com.pwr.amproject.model
 
 import java.io.Serializable
 
-enum class Hands: Serializable {
+enum class HandRanks: Serializable {
     ROYAL_FLUSH,
     STRAIGHT_FLUSH,
     FOUR_OF_A_KIND,

@@ -7,6 +7,10 @@ data class Card (
     val reverseSource: Int,
     val colour: CardColour,
     val value: CardValue
-) : Serializable
+) : Serializable {
+    override fun toString(): String {
+        return "$value of $colour"
+    }
+}
 
 
