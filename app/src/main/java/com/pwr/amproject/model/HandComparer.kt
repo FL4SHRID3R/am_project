@@ -1,40 +1,58 @@
 package com.pwr.amproject.model
 
+import com.pwr.amproject.utils.getCardsList
 import com.pwr.amproject.utils.sortCardsByColour
 import com.pwr.amproject.utils.sortCardsByValue
 
 class HandComparer {
 
-    fun getHandRank(playerHand: Hand, dealtCards: List<Card>): HandRanks {
-        val toSort: MutableList<Card> = dealtCards.toMutableList()
-        toSort.add(playerHand.firstCard)
-        toSort.add(playerHand.secondCard)
+    fun getCardsFromRank(rank: HandRanks, playerHand: Hand, dealtCards: List<Card>): List<Card> {
+        val cards = getCardsList(playerHand, dealtCards)
 
-        val toCompare: List<Card> = sortCardsByValue(toSort)
-
-        return if (toCompare.size < 5) HandRanks.HIGH_CARD
-        else if (isRoyalFlush(toCompare)) HandRanks.ROYAL_FLUSH
-        else if (isStraightFlush(toCompare)) HandRanks.STRAIGHT_FLUSH
-        else if (isFourOfAKind(toCompare)) HandRanks.FOUR_OF_A_KIND
-        else if (isFullHouse(toCompare)) HandRanks.FULL_HOUSE
-        else if (isFlush(toCompare)) HandRanks.FLUSH
-        else if (isStraight(toCompare)) HandRanks.STRAIGHT
-        else if (isThreeOfAKind(toCompare)) HandRanks.THREE_OF_A_KIND
-        else if (isTwoPair(toCompare)) HandRanks.TWO_PAIR
-        else if (isOnePair(toCompare)) HandRanks.ONE_PAIR
-        else HandRanks.HIGH_CARD
+        return when (rank) {
+            HandRanks.ROYAL_FLUSH -> getRoyalFlush(cards)!!
+            HandRanks.STRAIGHT_FLUSH -> getStraightFlush(cards)!!
+            HandRanks.FOUR_OF_A_KIND -> getFourOfAKind(cards)!!
+            HandRanks.FULL_HOUSE -> getFullHouse(cards)!!
+            HandRanks.FLUSH -> getFlush(cards)!!
+            HandRanks.STRAIGHT -> getStraight(cards)!!
+            HandRanks.THREE_OF_A_KIND -> getThreeOfAKind(cards)!!
+            HandRanks.TWO_PAIR -> getTwoPair(cards)!!
+            HandRanks.ONE_PAIR -> getOnePair(cards)!!
+            HandRanks.HIGH_CARD -> return listOf(cards[0])
+        }
     }
+
+    fun getHandRank(playerHand: Hand, dealtCards: List<Card>): HandRanks {
+        val toCompare: List<Card> = getCardsList(playerHand, dealtCards)
+
+        return when {
+            toCompare.size < 5 -> HandRanks.HIGH_CARD
+            isRoyalFlush(toCompare) -> HandRanks.ROYAL_FLUSH
+            isStraightFlush(toCompare) -> HandRanks.STRAIGHT_FLUSH
+            isFourOfAKind(toCompare) -> HandRanks.FOUR_OF_A_KIND
+            isFullHouse(toCompare) -> HandRanks.FULL_HOUSE
+            isFlush(toCompare) -> HandRanks.FLUSH
+            isStraight(toCompare) -> HandRanks.STRAIGHT
+            isThreeOfAKind(toCompare) -> HandRanks.THREE_OF_A_KIND
+            isTwoPair(toCompare) -> HandRanks.TWO_PAIR
+            isOnePair(toCompare) -> HandRanks.ONE_PAIR
+            else -> HandRanks.HIGH_CARD
+        }
+    }
+
+
 
     private fun isRoyalFlush(cards: List<Card>): Boolean {
         return getRoyalFlush(cards) != null
     }
 
-    fun getRoyalFlush(cards: List<Card>): List<Card>? {
+    private fun getRoyalFlush(cards: List<Card>): List<Card>? {
         val straightFlush = getStraightFlush(cards)
-        if(straightFlush != null && straightFlush.last().value == CardValue.TEN) {
-            return straightFlush
+        return if (straightFlush != null && straightFlush.last().value == CardValue.TEN) {
+            straightFlush
         } else {
-            return null
+            null
         }
     }
 
@@ -42,7 +60,7 @@ class HandComparer {
         return getStraightFlush(cards) != null
     }
 
-    fun getStraightFlush(cards: List<Card>): List<Card>? {
+    private fun getStraightFlush(cards: List<Card>): List<Card>? {
         val flush = getFlush(cards)
         if (flush != null) {
             val straight = getStraight(sortCardsByValue(flush))
@@ -56,7 +74,7 @@ class HandComparer {
         return getFourOfAKind(cards) != null
     }
 
-    fun getFourOfAKind(cards: List<Card>): List<Card>? {
+    private fun getFourOfAKind(cards: List<Card>): List<Card>? {
         for (i in 0 until cards.size - 3) {
             if (cards[i].value == cards[i + 1].value &&
                 cards[i + 1].value == cards[i + 2].value &&
@@ -71,7 +89,7 @@ class HandComparer {
         return getFullHouse(cards) != null
     }
 
-    fun getFullHouse(cards: List<Card>): List<Card>? {
+    private fun getFullHouse(cards: List<Card>): List<Card>? {
         val threeOfAKind = getThreeOfAKind(cards)
         if (threeOfAKind != null) {
             val reduced = cards.toMutableList()
@@ -87,7 +105,7 @@ class HandComparer {
         return getFlush(cards) != null
     }
 
-    fun getFlush(cards: List<Card>): List<Card>? {
+    private fun getFlush(cards: List<Card>): List<Card>? {
         val newCards = sortCardsByColour(cards)
         var result: MutableList<Card> = mutableListOf(newCards[0])
         for (i in 0 until newCards.size - 1) {
@@ -109,7 +127,7 @@ class HandComparer {
         return getStraight(cards) != null
     }
 
-    fun getStraight(cards: List<Card>): List<Card>? {
+    private fun getStraight(cards: List<Card>): List<Card>? {
         var result: MutableList<Card> = mutableListOf(cards[0])
         for (i in 0 until cards.size - 1) {
             if (cards[i].value.ordinal - cards[i + 1].value.ordinal == 1) {
@@ -130,7 +148,7 @@ class HandComparer {
         return getThreeOfAKind(cards) != null
     }
 
-    fun getThreeOfAKind(cards: List<Card>): List<Card>? {
+    private fun getThreeOfAKind(cards: List<Card>): List<Card>? {
         for (i in 0 until cards.size - 2) {
             if (cards[i].value == cards[i + 1].value &&
                 cards[i + 1].value == cards[i + 2].value
@@ -144,7 +162,7 @@ class HandComparer {
         return getTwoPair(cards) != null
     }
 
-    fun getTwoPair(cards: List<Card>): List<Card>? {
+    private fun getTwoPair(cards: List<Card>): List<Card>? {
         val firstPair = getOnePair(cards)
         if (firstPair != null) {
             val reducedCards = cards.toMutableList()
@@ -161,7 +179,7 @@ class HandComparer {
         return getOnePair(cards) != null
     }
 
-    fun getOnePair(cards: List<Card>): List<Card>? {
+    private fun getOnePair(cards: List<Card>): List<Card>? {
         for (i in 0 until cards.size - 1) {
             if (cards[i].value == cards[i + 1].value)
                 return listOf(cards[i], cards[i + 1])

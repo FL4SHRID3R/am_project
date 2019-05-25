@@ -1,6 +1,7 @@
 package com.pwr.amproject.utils
 
 import com.pwr.amproject.model.Card
+import com.pwr.amproject.model.Hand
 
 fun sortCardsByValue(cards: List<Card>): List<Card> {
     return cards.sortedWith(Comparator { card1, card2 ->
@@ -20,4 +21,11 @@ fun sortCardsByColour(cards: List<Card>): List<Card> {
             else -> 1
         }
     })
+}
+
+fun getCardsList(playerHand: Hand, dealtCards: List<Card>): List<Card> {
+    val toSort: MutableList<Card> = mutableListOf(playerHand.firstCard, playerHand.secondCard)
+    toSort.addAll(dealtCards.toMutableList())
+
+    return sortCardsByValue(toSort)
 }

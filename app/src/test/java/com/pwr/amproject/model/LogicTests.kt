@@ -4,15 +4,45 @@ import com.pwr.amproject.logic.Judge
 import com.pwr.amproject.utils.sortCardsByValue
 import org.junit.Test
 
-class HandComparerTest {
+class LogicTests {
 
     private var deck = Deck()
 
+    /**
+     * Testing player winnings.
+     */
     @Test
-    fun test() {
+    fun testBestPlayers() {
+        val judge = Judge()
+        val table: MutableList<Card> = ArrayList()
+
+        for (i in 1..deck.getCurrentDeckSize()) {
+            if (i == 1 || i == 15 || i == 26 || i == 35 || i == 51)
+                table.add(deck.draw())
+            else
+                deck.draw()
+        }
+
+        println("On table:")
+        table.forEach { println("$it") }
+
+        val hands: MutableMap<Int, Hand> = getHands(listOf(14, 16, 27, 18, 39, 11))
+
+        println("\nIn hands:")
+        hands.forEach { println("Player ${it.key} with hand ${it.value}") }
+
+        println("\nWon: ${judge.findBestPlayers(hands.toMap(), table)}")
+
+    }
+
+    /**
+     * Testing list<card> sorting
+     */
+    @Test
+    fun testSorting() {
         deck.shuffle()
         val testTable: MutableList<Card> = ArrayList()
-        for (i in 1..30) {
+        for (i in 1..10) {
             testTable.add(deck.draw())
         }
 
