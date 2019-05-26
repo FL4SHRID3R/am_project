@@ -54,8 +54,8 @@ class Deck {
                 table[3] = deck[10]
                 table[4] = deck[12]
 
-                var p1Score = j.translate(j.judge(hand1, table))
-                var p2Score = j.translate(j.judge(hand2, table))
+                val p1Score = j.translate(j.judge(hand1, table, 99))
+                val p2Score = j.translate(j.judge(hand2, table, 99))
 
                 //System.out.println(Arrays.toString(p1Score));
                 //System.out.println(Arrays.toString(p2Score));
@@ -85,9 +85,9 @@ class Deck {
                 table[3] = deck[12]
                 table[4] = deck[14]
 
-                var p1Score = j.translate(j.judge(hand1, table))
-                var p2Score = j.translate(j.judge(hand2, table))
-                var p3Score = j.translate(j.judge(hand3, table))
+                val p1Score = j.translate(j.judge(hand1, table, 99))
+                val p2Score = j.translate(j.judge(hand2, table, 99))
+                val p3Score = j.translate(j.judge(hand3, table, 99))
 
                 return deck[1].toString() + " " + deck[4] + " " + deck[2] + " " + deck[5] + " " + deck[3] + " " + deck[6] + " " + deck[8] + " " + deck[9] + " " + deck[10] + " " + deck[12] + " " + deck[14]
             }
@@ -115,10 +115,10 @@ class Deck {
                 table[3] = deck[14]
                 table[4] = deck[16]
 
-                var p1Score = j.translate(j.judge(hand1, table))
-                var p2Score = j.translate(j.judge(hand2, table))
-                var p3Score = j.translate(j.judge(hand3, table))
-                var p4Score = j.translate(j.judge(hand4, table))
+                val p1Score = j.translate(j.judge(hand1, table, 99))
+                val p2Score = j.translate(j.judge(hand2, table, 99))
+                val p3Score = j.translate(j.judge(hand3, table, 99))
+                val p4Score = j.translate(j.judge(hand4, table, 99))
 
                 return deck[1].toString() + " " + deck[5] + " " + deck[2] + " " + deck[6] + " " + deck[3] + " " + deck[7] + " " + deck[4] + " " + deck[8] + " " + deck[10] + " " + deck[11] + " " + deck[12] + " " + deck[14] + " " + deck[16]
             }

@@ -171,6 +171,206 @@ class Judge {
         return false
     }
 
+    fun handPair(hand: IntArray): Boolean {
+        if(getCardFigureID(hand[0]) == getCardFigureID(hand[1])){
+            return true
+        }
+
+        return false
+    }
+
+    fun handMatchingColors(hand: IntArray): Boolean {
+        if(getCardColorID(hand[0]) == getCardColorID(hand[1])){
+            return true
+        }
+
+        return false
+    }
+
+    fun handJackOrAbove(hand: IntArray): Boolean {
+        if(getCardFigureID(hand[0]) > 8 || getCardFigureID(hand[1]) > 8){
+            return true
+        }
+
+        return false
+    }
+
+    fun handOneAfterAnother(hand: IntArray): Boolean {
+        if(getCardFigureID(hand[0]) == getCardFigureID(hand[1]) + 1 || getCardFigureID(hand[0]) + 1 == getCardFigureID(hand[1])){
+            return true
+        }
+
+        if(getCardFigureID(hand[0]) == 0 && getCardFigureID(hand[0]) == 12){
+            return true
+        }else if(getCardFigureID(hand[0]) == 12 && getCardFigureID(hand[0]) == 0){
+            return true
+        }
+
+        return false
+    }
+
+    fun tableThreeCardsInColor(table: IntArray, round: Int): Boolean {
+        when(round){
+            1 ->{
+                return getCardColorID(table[0]) == getCardColorID(table[1]) && getCardColorID(table[1]) == getCardColorID(table[2])
+            }
+            2 ->{
+                for(i in 0..3){
+                    if(tableThreeCardsInColor((intArrayOf(permutaions2[i][0], permutaions2[i][1], permutaions[i][2])), 1)){
+                        return true
+                    }
+                }
+
+                return false
+            }
+        }
+
+        return false
+    }
+
+    fun tablePair(table: IntArray, round: Int): Boolean {
+        val c = IntArray(5)
+        for (i in 0..4) {
+            c[i] = getCardFigureID(table[i])
+        }
+
+        c.sort()
+
+        when(round){
+            1 ->{
+                if(c[0] == c[1] || c[1] == c[2]){
+                    return true
+                }
+            }
+            2 ->{
+                if(c[0] == c[1] || c[1] == c[2] || c[2] == c[3]){
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    fun tableThreeCardsInColorAndOrder(table: IntArray, round: Int): Boolean {
+        if(tableThreeCardsInColor(table, round)){
+            val c = IntArray(5)
+            for (i in 0..4) {
+                c[i] = getCardFigureID(table[i])
+            }
+
+            c.sort()
+
+            when(round){
+                1 ->{
+                    return c[0] == c[1] + 1 && c[1] == c[2] + 1
+                }
+                2 ->{
+
+                    if(c[0] == c[1] + 1 && c[1] == c[2] + 1){
+                        return true
+                    }else if(c[1] == c[2] + 1 && c[2] == c[3] + 1){
+                        return true
+                    }
+
+                    return false
+                }
+            }
+        }
+
+        return false
+    }
+
+    fun combinationS(hand: IntArray, table: IntArray, round: Int): Boolean{
+        when(round){
+            1 ->{
+                val c = IntArray(5)
+                c[0] = hand[0]
+                c[1] = hand[1]
+                for (i in 2..4) {
+                    c[i] = getCardFigureID(table[i - 2])
+                }
+
+                c.sort()
+
+                if(c[0] == c[1] + 1 && c[1] == c[2] + 1 && c[2] == c[3] + 1){
+                    return true
+                }else if(c[1] == c[2] + 1 && c[2] == c[3] + 1 && c[3] == c[4] + 1){
+                    return true
+                }
+
+                return false
+            }
+            2 ->{
+                val c = IntArray(5)
+                c[0] = hand[0]
+                c[1] = hand[1]
+                for (i in 2..5) {
+                    c[i] = getCardFigureID(table[i - 2])
+                }
+
+                c.sort()
+
+                if(c[0] == c[1] + 1 && c[1] == c[2] + 1 && c[2] == c[3] + 1){
+                    return true
+                }else if(c[1] == c[2] + 1 && c[2] == c[3] + 1 && c[3] == c[4] + 1){
+                    return true
+                }else if(c[2] == c[3] + 1 && c[3] == c[4] + 1 && c[4] == c[5] + 1){
+                    return true
+                }
+
+                return false
+            }
+        }
+
+        return false
+    }
+
+    fun combinationF(hand: IntArray, table: IntArray, round: Int): Boolean{
+        when(round){
+            1 ->{
+                val c = IntArray(5)
+                c[0] = hand[0]
+                c[1] = hand[1]
+                for (i in 2..4) {
+                    c[i] = getCardColorID(table[i - 2])
+                }
+
+                c.sort()
+
+                if(c[0] == c[1] && c[1] == c[2] && c[2] == c[3]){
+                    return true
+                }else if(c[1] == c[2] && c[2] == c[3] && c[3] == c[4]){
+                    return true
+                }
+
+                return false
+            }
+            2 ->{
+                val c = IntArray(5)
+                c[0] = hand[0]
+                c[1] = hand[1]
+                for (i in 2..5) {
+                    c[i] = getCardColorID(table[i - 2])
+                }
+
+                c.sort()
+
+                if(c[0] == c[1] && c[1] == c[2] && c[2] == c[3]){
+                    return true
+                }else if(c[1] == c[2] && c[2] == c[3] && c[3] == c[4]){
+                    return true
+                }else if(c[2] == c[3] && c[3] == c[4] && c[4] == c[5]){
+                    return true
+                }
+
+                return false
+            }
+        }
+
+        return false
+    }
+
     //Funkcja oblicza podstawowy wynik ręki:
     //0 - Nic(wysoka karta)
     //1 - Para
@@ -204,7 +404,7 @@ class Judge {
         return intArrayOf(0, c[0], c[1], c[2], c[3], c[4])
     }
 
-    fun judge(hand: IntArray, table: IntArray): IntArray {
+    fun judge(hand: IntArray, table: IntArray, botHelperRound: Int): IntArray {
         val combined = intArrayOf(hand[0], hand[1], table[0], table[1], table[2], table[3], table[4])
 
 
@@ -220,7 +420,19 @@ class Judge {
         )
 
         i = 1
-        while (i < 21) {
+
+        var kk = 21
+
+        when(botHelperRound){
+            1 -> {
+                kk = 1
+            }
+            2 -> {
+                kk = 6
+            }
+        }
+
+        while (i < kk) {
             val c = intArrayOf(
                 combined[permutaions[i][0]],
                 combined[permutaions[i][1]],
@@ -643,7 +855,9 @@ class Judge {
     }
 
     //TODO dla 3 i 4 graczy
-    //Kolejność wygranych (bliżej lewej - lepsza ręka), = oznacza remis pomiędzy tymi graczami
+    //Funkcje przyjmują (w zależności od nazwy) 2, 3 lub 4 wyniki i decydują kolejność wygranych
+
+    //Kolejność wygranych: bliżej lewej - lepsza ręka, = oznacza remis pomiędzy tymi graczami
 
     fun twoPeopleVictoryOrder(p1: IntArray, p2: IntArray): String {
         for (i in p1.indices) {
@@ -655,6 +869,35 @@ class Judge {
         }
 
         return "1=2"
+    }
+
+    fun threePeopleVictoryOrder(p1: IntArray, p2: IntArray, p3: IntArray): String {
+        var fEqS = true
+        var sEqT = true
+        var fEqT = true
+
+        for (i in p1.indices) {
+            if (p1[i] != p2[i]) {
+                fEqS = false
+                break
+            }
+        }
+
+        for (i in p2.indices) {
+            if (p2[i] != p3[i]) {
+                sEqT = false
+                break
+            }
+        }
+
+        for (i in p1.indices) {
+            if (p1[i] != p3[i]) {
+                fEqT = false
+                break
+            }
+        }
+
+        return " "
     }
 
     companion object {
@@ -684,9 +927,12 @@ class Judge {
             intArrayOf(1, 3, 4, 5, 6),
             intArrayOf(2, 3, 4, 5, 6)
         )
+
+        private val permutaions2 = arrayOf(
+            intArrayOf(0, 1, 2),
+            intArrayOf(0, 1, 3),
+            intArrayOf(0, 2, 3),
+            intArrayOf(1, 2, 3)
+        )
     }
-
-    //public String threePeopleVictoryOrder(int[] p1, int[] p2, int[] p3) {
-
-    //}
 }
