@@ -142,8 +142,6 @@ class Coordinator(
             }
         }
 
-        println(allCards)
-        println(playerStatus)
         if (maxPlayers == 3) {
             hands[3] = Pair(allCards[4], allCards[5])
             table = allCards.subList(6, 11)
@@ -161,11 +159,31 @@ class Coordinator(
     }
 
     private fun finishRound() {
-
-    }
-
-    private fun getBidMessage() {
-        // TODO get message from client after his move
+        val multipleWinners: List<Int>
+        if (winners[0].contains("=")) {
+            multipleWinners = winners[0].split("=").map { it.toInt() }
+        } else {
+            multipleWinners = mutableListOf(winners[0].toInt())
+        }
+        for (i in 1..playerStatus.size) {
+            if (multipleWinners.contains(i)) {
+                val prize: Int
+                if (multipleWinners.size > 1) {
+                    if (biddingPool % multipleWinners.size > 0) {
+                        prize = (biddingPool - biddingPool % multipleWinners.size) / multipleWinners.size
+                        biddingPool %= multipleWinners.size
+                    } else {
+                        prize = biddingPool / multipleWinners.size
+                    }
+                } else {
+                    prize = biddingPool
+                }
+                setWinStatus(i, prize)
+            } else {
+                setLostStatus(i)
+            }
+        }
+        currentRound = 0
     }
 
     private fun setBidMessage(playerID: Int) {
@@ -212,23 +230,15 @@ class Coordinator(
     }
 
     private fun nextPhase() {
-        currentPhase++
+        if (currentPhase == 1) {
+            currentRound++
+            currentPhase = 0
+        } else {
+            currentPhase++
+        }
     }
 
     private fun finishGame() {
-        var multipleWinners: List<Int>
-        if (winners[0].contains("=")) {
-            multipleWinners = winners[0].split("=").map { it.toInt() }
-        } else {
-            multipleWinners = mutableListOf(winners[0].toInt())
-        }
-        for (i in 1..playerStatus.size) {
-            if (multipleWinners.contains(i)) {
-                setWinStatus(i)
-            } else {
-                setLostStatus(i)
-            }
-        }
         clear()
     }
 
@@ -238,17 +248,17 @@ class Coordinator(
         } else if (playerStatus[playerId] == 1) {
             playerStatus[playerId] = 0
         }
-        setFinalMessage(playerId, "W $biddingPool")
+        setFinalMessage(playerId, "L")
         sendMessage()
     }
 
-    private fun setWinStatus(playerId: Int) {
+    private fun setWinStatus(playerId: Int, amount: Int) {
         if (playerStatus[playerId] == 3) {
             playerStatus[playerId] = 32
         } else if (playerStatus[playerId] == 1) {
             playerStatus[playerId] = 12
         }
-        setFinalMessage(playerId, "L")
+        setFinalMessage(playerId, "W $amount")
         sendMessage()
     }
 
