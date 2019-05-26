@@ -1,6 +1,8 @@
 package com.pwr.amproject.model
 
-enum class Hands {
+import java.io.Serializable
+
+enum class HandRanks: Serializable {
     ROYAL_FLUSH,
     STRAIGHT_FLUSH,
     FOUR_OF_A_KIND,

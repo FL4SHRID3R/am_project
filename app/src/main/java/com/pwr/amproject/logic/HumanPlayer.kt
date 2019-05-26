@@ -1,4 +1,4 @@
-package com.pwr.amproject
+package com.pwr.amproject.logic
 
 import com.pwr.amproject.model.Player
 
