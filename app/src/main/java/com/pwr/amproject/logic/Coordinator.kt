@@ -5,11 +5,25 @@ import com.pwr.amproject.BotLogic.Deck
 class Coordinator(
     private val bigBlind: Int,
     private val smallBlind: Int,
-    private val maxPlayers: Int
+    private val maxPlayers: Int,
+    private val maxBots: Int
 ) {
     private var deck = Deck()
     private var hands: MutableMap<Int, Pair<String, String>> = HashMap()
     private lateinit var table: List<String>
+
+    /**
+     * Map<PlayerID, StatusID>
+     * Statusy:
+     * -1 - empty
+     * 0 - player (lost)
+     * 1 - player (playing)
+     * 10 - player (won)
+     * 2 - bot (lost)
+     * 3 - bot (playing)
+     * 32 - bot (won)
+     */
+    private var playerStatus: MutableMap<Int, Int> = hashMapOf(Pair(1, -1), Pair(2, -1), Pair(3, -1), Pair(4, -1))
 
     /**
      * (currentRound, currentPhase)
@@ -41,7 +55,7 @@ class Coordinator(
      * -1 - brak ruchu gracza
      * 0 - fold
      * 1 - check/call
-     * 2+ - raise/all-in
+     * 2+ - raise/all-in (wartość)
      */
     private var lastMove: Int = -1
 
@@ -115,7 +129,21 @@ class Coordinator(
         hands[2] = Pair(allCards[2], allCards[3])
         table = allCards.subList(4, 9)
         winners = allCards.subList(10, allCards.size).toString()
+        if (maxBots > 0) {
+            for (i in 1..maxBots) {
+                playerStatus[i] = 3
+            }
+            for (i in maxBots..(maxBots + maxPlayers)) {
+                playerStatus[i] = 1
+            }
+        } else {
+            for (i in 1..maxPlayers) {
+                playerStatus[i] = 1
+            }
+        }
 
+        println(allCards)
+        println(playerStatus)
         if (maxPlayers == 3) {
             hands[3] = Pair(allCards[4], allCards[5])
             table = allCards.subList(6, 11)
