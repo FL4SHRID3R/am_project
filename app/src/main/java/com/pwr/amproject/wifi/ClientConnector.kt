@@ -14,7 +14,9 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
+
 import java.util.*
+
 
 
 class ClientConnector(private val context: Context, private val CODE_LOCATION_PERMISSION : Int, private val port : Int = 44444) {
@@ -47,6 +49,9 @@ class ClientConnector(private val context: Context, private val CODE_LOCATION_PE
     fun sendInfo(message : String){
         t= Thread({output.writeUTF(message)})
         t.start()
+
+
+
     }
 
     /**connect to hotspot with given SSID.
@@ -115,6 +120,7 @@ class ClientConnector(private val context: Context, private val CODE_LOCATION_PE
             }
 
             readThread.start()
+
         }
     }
 

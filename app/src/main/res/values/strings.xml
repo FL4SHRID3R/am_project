@@ -5,4 +5,14 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="server_name_hint">nazwa</string>
+    <string name="server_password_hint">hasło</string>
+    <string name="bots_count_hint">ilość botów (max 4)</string>
+    <string name="players_count_hint">ilość graczy (max 4)</string>
+    <string name="next_button">Dalej</string>
+    <string name="connection_type">Łączę się jako:</string>
+    <string name="server_name">Nazwa serwera:</string>
+    <string name="server_password">Hasło do serwera</string>
+    <string name="players_count">Gracze:</string>
+    <string name="bots_count">Boty</string>
 </resources>

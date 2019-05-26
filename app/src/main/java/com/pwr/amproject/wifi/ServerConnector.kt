@@ -21,6 +21,7 @@ import java.net.Socket
 import java.util.*
 
 
+
 /**Class used for creating hotspot, and communnication of server device with clients
  *
  */
@@ -45,6 +46,7 @@ class ServerConnector(private val context: Context, private val CODE_WRITE_SETTI
         }
     }
 
+
     inner class ServerThread() : Thread() {
 
         init {
@@ -64,7 +66,6 @@ class ServerConnector(private val context: Context, private val CODE_WRITE_SETTI
             }
         }
     }
-
     init {
         for(i in 0..(maxNumPlayers-1)){
             msgListArr[i] = LinkedList<String>()
@@ -82,6 +83,7 @@ class ServerConnector(private val context: Context, private val CODE_WRITE_SETTI
     fun writeClientByNum(num : Int,message : String){
         t = Thread({outputs[num]!!.writeUTF(message)})
         t.start()
+
     }
 
     fun startLookingForClients(){
