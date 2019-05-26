@@ -64,6 +64,8 @@ class Deck {
                     p1Score,
                     p2Score
                 )
+
+                //return p1Score.joinToString() + " | " + p2Score.joinToString() + " | " + j.twoPeopleVictoryOrder(p1Score, p2Score)
             }
             3 -> {
                 hand1 = IntArray(2)
@@ -89,7 +91,13 @@ class Deck {
                 val p2Score = j.translate(j.judge(hand2, table, 99))
                 val p3Score = j.translate(j.judge(hand3, table, 99))
 
-                return deck[1].toString() + " " + deck[4] + " " + deck[2] + " " + deck[5] + " " + deck[3] + " " + deck[6] + " " + deck[8] + " " + deck[9] + " " + deck[10] + " " + deck[12] + " " + deck[14]
+                return deck[1].toString() + " " + deck[4] + " " + deck[2] + " " + deck[5] + " " + deck[3] + " " + deck[6] + " " + deck[8] + " " + deck[9] + " " + deck[10] + " " + deck[12] + " " + deck[14] + " " + j.threePeopleVictoryOrder(
+                    p1Score,
+                    p2Score,
+                    p3Score
+                )
+
+                //return p1Score.joinToString() + " | " + p2Score.joinToString() + " | " + p3Score.joinToString() + " | " + j.threePeopleVictoryOrder(p1Score, p2Score, p3Score)
             }
             else -> {
                 hand1 = IntArray(2)
@@ -120,7 +128,15 @@ class Deck {
                 val p3Score = j.translate(j.judge(hand3, table, 99))
                 val p4Score = j.translate(j.judge(hand4, table, 99))
 
-                return deck[1].toString() + " " + deck[5] + " " + deck[2] + " " + deck[6] + " " + deck[3] + " " + deck[7] + " " + deck[4] + " " + deck[8] + " " + deck[10] + " " + deck[11] + " " + deck[12] + " " + deck[14] + " " + deck[16]
+                return deck[1].toString() + " " + deck[5] + " " + deck[2] + " " + deck[6] + " " + deck[3] + " " + deck[7] + " " + deck[4] + " " + deck[8] + " " + deck[10] + " " + deck[11] + " " + deck[12] + " " + deck[14] + " " + deck[16] + " " + j.fourPeopleVictoryOrder(
+                    p1Score,
+                    p2Score,
+                    p3Score,
+                    p4Score
+                )
+
+                //return p1Score.joinToString() + " | " + p2Score.joinToString() + " | " + p3Score.joinToString() + " | " + p4Score.joinToString() + " | " + j.fourPeopleVictoryOrder(p1Score, p2Score, p3Score, p4Score)
+
             }
         }
     }

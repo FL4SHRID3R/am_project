@@ -15,6 +15,8 @@ import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 
+import java.util.*
+
 
 
 class ClientConnector(private val context: Context, private val CODE_LOCATION_PERMISSION : Int, private val port : Int = 44444) {
@@ -24,13 +26,32 @@ class ClientConnector(private val context: Context, private val CODE_LOCATION_PE
     private lateinit var output : DataOutputStream
     private lateinit var input : DataInputStream
     private val ipAdress = "192.168.43.1"
+    private var msgList = LinkedList<String>()
+    private var readThread = ReaderThread()
+    private  lateinit var t:Thread
+    inner class ReaderThread() : Thread()
+    {
+        override fun  run(){
+            while(true){
+                msgList?.add(input!!.readUTF())
+            }
+        }
 
-    fun readInfo() :String{
-        return input.readUTF()
+    }
+
+    fun readInfo() : String{
+        if(msgList?.isEmpty()!!){
+            return ""
+        }
+        return msgList?.pop().toString()
     }
 
     fun sendInfo(message : String){
-        output.writeUTF(message)
+        t= Thread({output.writeUTF(message)})
+        t.start()
+
+
+
     }
 
     /**connect to hotspot with given SSID.
@@ -97,6 +118,9 @@ class ClientConnector(private val context: Context, private val CODE_LOCATION_PE
             }catch(e:Exception){
                 Log.d("WIFIEDEK",e.toString())
             }
+
+            readThread.start()
+
         }
     }
 
