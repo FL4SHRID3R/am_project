@@ -8,7 +8,7 @@ class Coordinator(
     private val maxPlayers: Int
 ) {
     private var deck = Deck()
-    private var hands: MutableList<Pair<String, String>> = ArrayList()
+    private var hands: MutableMap<Int, Pair<String, String>> = HashMap()
     private lateinit var table: List<String>
 
     /**
@@ -22,8 +22,8 @@ class Coordinator(
      * (3, 0) - 5-ta karta
      * (3, 1) - licytacja
      * (4, 0) - koniec rundy
+     * (5, 0) - koniec rozgrywki
      */
-
     private var currentRound: Int = 0
     private var currentPhase: Int = 0
 
@@ -35,6 +35,18 @@ class Coordinator(
     private var bigBlindId: Int = 2
 
     private var biddingPool: Int = 0
+    private var lastRaise: Int = bigBlind
+
+    /**
+     * -1 - brak ruchu gracza
+     * 0 - fold
+     * 1 - check/call
+     * 2+ - raise/all-in
+     */
+    private var lastMove: Int = -1
+
+    private var serverMessage: String = ""
+    private var clientMessage: String = ""
 
 
     fun roundSwitcher() {
@@ -42,10 +54,13 @@ class Coordinator(
             0 -> {
                 when (currentPhase) {
                     0 -> {
-                        init()
+                        startRound()
+                        setStartRoundMessage(1)
+                        nextPhase()
                     }
                     1 -> {
                         bid()
+                        nextPhase()
                     }
                 }
             }
@@ -53,9 +68,11 @@ class Coordinator(
                 when (currentPhase) {
                     0 -> {
                         showCards(3)
+                        nextPhase()
                     }
                     1 -> {
                         bid()
+                        nextPhase()
                     }
                 }
             }
@@ -63,9 +80,11 @@ class Coordinator(
                 when (currentPhase) {
                     0 -> {
                         showCards(1)
+                        nextPhase()
                     }
                     1 -> {
                         bid()
+                        nextPhase()
                     }
                 }
             }
@@ -73,16 +92,39 @@ class Coordinator(
                 when (currentPhase) {
                     0 -> {
                         showCards(1)
+                        nextPhase()
                     }
                     1 -> {
                         bid()
+                        nextPhase()
                     }
                 }
             }
             4 -> {
-                finish()
-                nextRound()
+                finishRound()
             }
+            5 -> {
+                finishGame()
+            }
+        }
+    }
+
+    private fun startRound() {
+        val allCards = deck.getCards(maxPlayers).split(" ")
+        hands[1] = Pair(allCards[0], allCards[1])
+        hands[2] = Pair(allCards[2], allCards[3])
+        table = allCards.subList(4, 9)
+        winners = allCards.subList(10, allCards.size).toString()
+
+        if (maxPlayers == 3) {
+            hands[3] = Pair(allCards[4], allCards[5])
+            table = allCards.subList(6, 11)
+            winners = allCards.subList(12, allCards.size).toString()
+        }
+        if (maxPlayers == 4) {
+            hands[4] = Pair(allCards[6], allCards[7])
+            table = allCards.subList(8, 13)
+            winners = allCards.subList(14, allCards.size).toString()
         }
     }
 
@@ -90,20 +132,69 @@ class Coordinator(
 
     }
 
-    private fun nextRound() {
+    private fun finishRound() {
 
     }
 
+    private fun getBidMessage() {
+        // TODO get message from client after his move
+    }
+
+    private fun setBidMessage(playerID: Int) {
+        serverMessage = "$playerID " +
+                "$currentRound " +
+                "$currentPhase " +
+                "${hands[playerID]!!.first} " +
+                "${hands[playerID]!!.second} " +
+                "$biddingPool " +
+                "$lastRaise " +
+                "$lastMove "
+    }
+
+    private fun setStartRoundMessage(playerID: Int) {
+        serverMessage = "$playerID " +
+                "$currentRound " +
+                "$currentPhase " +
+                "${hands[playerID]!!.first} " +
+                "${hands[playerID]!!.second} " +
+                "$dealerId " +
+                "$smallBlindId " +
+                "$bigBlindId "
+    }
+
     private fun bid() {
-        currentPlayerId++
-        if (allPlayersMoved()) {
-            currentRound++
+        while (!allPlayersMoved()) {
+            setBidMessage(currentPlayerId)
+            sendMessage()
+            waitForAnswer()
+            currentPlayerId++
         }
+    }
+
+    private fun waitForAnswer() {
+
+    }
+
+    private fun sendMessage() {
+
+    }
+
+    private fun allPlayersMoved(): Boolean {
+        return currentPlayerId == maxPlayers
+    }
+
+    private fun nextPhase() {
+        currentPhase++
+    }
+
+    private fun finishGame() {
+        setFinalMessage(1, "WIN")
+        clear()
     }
 
     private fun clear() {
         deck = Deck()
-        hands = ArrayList()
+        hands = HashMap()
         table = ArrayList()
         dealerId = 0
         smallBlindId = 1
@@ -113,48 +204,10 @@ class Coordinator(
         biddingPool = 0
     }
 
-    private fun nextPhase() {
-        currentPlayerId++
-    }
-
-    private fun nextTurn() {
-        dealerId++
-        smallBlindId++
-        bigBlindId++
-
-        biddingPool = 0
-        currentPlayerId = dealerId
-        winners = ""
-        currentRound = 0
-    }
-
-    fun init() {
-        clear()
-        val allCards = deck.getCards(maxPlayers).split(" ")
-        hands.add(Pair(allCards[0], allCards[1]))
-        hands.add(Pair(allCards[2], allCards[3]))
-        table = allCards.subList(4, 9)
-        winners = allCards.subList(10, allCards.size).toString()
-
-        if (maxPlayers == 3) {
-            hands.add(Pair(allCards[4], allCards[5]))
-            table = allCards.subList(6, 11)
-            winners = allCards.subList(12, allCards.size).toString()
-        }
-        if (maxPlayers == 4) {
-            hands.add(Pair(allCards[6], allCards[7]))
-            table = allCards.subList(8, 13)
-            winners = allCards.subList(14, allCards.size).toString()
-        }
-
-
-    }
-
-    private fun finish() {
-        println("Won player ")
-    }
-
-    private fun allPlayersMoved(): Boolean {
-        return currentPlayerId == maxPlayers
+    private fun setFinalMessage(playerID: Int, result: String) {
+        serverMessage = "$playerID " +
+                "$currentRound " +
+                "$currentPhase " +
+                result
     }
 }
