@@ -1,6 +1,39 @@
 package com.pwr.amproject.BotLogic
 
+import kotlin.math.max
+
 class Judge {
+    private fun tieSolver(tScores: IntArray, places: IntArray): String{
+        var t1 = tScores
+        var t2 = places
+
+        for(i in 0 until t1.size){
+            for(j in 0 until t1.size - 1){
+                if(t1[j] < t1[j + 1]){
+                    var temp1 = t1[j+1]
+                    var temp2 = t2[j+1]
+                    t1[j+1] = t1[j]
+                    t2[j+1] = t2[j]
+                    t1[j] = temp1
+                    t2[j] = temp2
+                }
+            }
+        }
+
+        var s = ""
+
+        for(i in 0 until t1.size - 1){
+            s += t2[i]
+            if(t1[i] == t1[i+1]){
+                s += "="
+            }else{
+                s+= " "
+            }
+        }
+
+        return s + t2[t2.size - 1]
+    }
+
     //kolejność kolorów: czerw(kier), dzwonek(karo), żołądź(trefl), wino(pik)
 
     private fun getCardColorID(id: Int): Int {
@@ -854,7 +887,22 @@ class Judge {
         }
     }
 
-    //TODO dla 3 i 4 graczy
+    //Tiebreaker score to liczba w systemie 13, obliczana na podstawie siły układu (im mocniejszy układ tym wyższy wynik)
+
+    fun getTiebreakerScore(p: IntArray, length: Int): Int {
+        var ts = 0
+
+        for(i in p.indices){
+            ts = ts * 13 + p[i]
+        }
+
+        for(i in p.size until length){
+            ts *= 13
+        }
+
+        return ts
+    }
+
     //Funkcje przyjmują (w zależności od nazwy) 2, 3 lub 4 wyniki i decydują kolejność wygranych
 
     //Kolejność wygranych: bliżej lewej - lepsza ręka, = oznacza remis pomiędzy tymi graczami
@@ -872,32 +920,31 @@ class Judge {
     }
 
     fun threePeopleVictoryOrder(p1: IntArray, p2: IntArray, p3: IntArray): String {
-        var fEqS = true
-        var sEqT = true
-        var fEqT = true
+        var size = max(p1.size, p2.size)
+        size = max(size, p3.size)
 
-        for (i in p1.indices) {
-            if (p1[i] != p2[i]) {
-                fEqS = false
-                break
-            }
-        }
+        var tscores = intArrayOf(
+            getTiebreakerScore(p1, size),
+            getTiebreakerScore(p2, size),
+            getTiebreakerScore(p3, size)
+        )
 
-        for (i in p2.indices) {
-            if (p2[i] != p3[i]) {
-                sEqT = false
-                break
-            }
-        }
+        return tieSolver(tscores, intArrayOf(1,2,3))
+    }
 
-        for (i in p1.indices) {
-            if (p1[i] != p3[i]) {
-                fEqT = false
-                break
-            }
-        }
+    fun fourPeopleVictoryOrder(p1: IntArray, p2: IntArray, p3: IntArray, p4: IntArray): String {
+        var size = max(p1.size, p2.size)
+        size = max(size, p3.size)
+        size = max(size, p4.size)
 
-        return " "
+        var tscores = intArrayOf(
+            getTiebreakerScore(p1, size),
+            getTiebreakerScore(p2, size),
+            getTiebreakerScore(p3, size),
+            getTiebreakerScore(p4, size)
+        )
+
+        return tieSolver(tscores, intArrayOf(1,2,3,4))
     }
 
     companion object {
