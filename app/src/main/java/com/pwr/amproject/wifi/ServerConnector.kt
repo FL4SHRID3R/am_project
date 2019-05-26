@@ -18,6 +18,7 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.ServerSocket
 import java.net.Socket
+import java.util.*
 
 
 /**Class used for creating hotspot, and communnication of server device with clients
@@ -31,6 +32,18 @@ class ServerConnector(private val context: Context, private val CODE_WRITE_SETTI
     private var inputs = arrayOfNulls<DataInputStream>(maxNumPlayers)
     private var clientsNum = 0
     private lateinit var serverSocket : ServerSocket
+    private var msgListArr =  arrayOfNulls<LinkedList<String>>(maxNumPlayers)
+    private var readThreads = arrayOfNulls<ReaderThread>(maxNumPlayers)
+    private lateinit var t :Thread;
+
+    inner class ReaderThread(var nr: Int) : Thread()
+    {
+        override fun  run(){
+            while(true){
+                (msgListArr[nr])?.add(inputs[nr]!!.readUTF())
+            }
+        }
+    }
 
     inner class ServerThread() : Thread() {
 
@@ -52,12 +65,23 @@ class ServerConnector(private val context: Context, private val CODE_WRITE_SETTI
         }
     }
 
+    init {
+        for(i in 0..(maxNumPlayers-1)){
+            msgListArr[i] = LinkedList<String>()
+            readThreads[i] = ReaderThread(i)
+        }
+    }
+
     fun readClientByNum(num : Int) : String{
-        return inputs[num]!!.readUTF()
+        if(msgListArr[num]?.isEmpty()!!){
+            return ""
+        }
+        return msgListArr[num]?.pop().toString()
     }
 
     fun writeClientByNum(num : Int,message : String){
-        return outputs[num]!!.writeUTF(message)
+        t = Thread({outputs[num]!!.writeUTF(message)})
+        t.start()
     }
 
     fun startLookingForClients(){
