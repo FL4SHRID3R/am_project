@@ -57,21 +57,22 @@ class GameActivity : AppCompatActivity(), Cards.OnFragmentInteractionListener {
             qlist.add(GUIPlayerInfo(i,startStack,0,1))
         }
 
-        if(isServer){
-            serverConnector = ServerConnector(this, setReqCode,44444,numPlayers-1-numBots)
-            //serverConnector.setHotSpot(SSID,password)
-            //serverConnector.startLookingForClients()
-            magic1.setOnClickListener{serverConnector.setHotSpot(SSID,"")}
-            magic2.setOnClickListener{serverConnector.startLookingForClients()}
-        }else{
-            clientConnector = ClientConnector(this, locReqCode,44444)
-            magic1.setOnClickListener{clientConnector.connectToHotspot(SSID,"")}
-            magic2.setOnClickListener{clientConnector.makeSocketConnection()}
-            //clientConnector.connectToHotspot(SSID,password)
-            //clientConnector.makeSocketConnection()
-            //Log.d("ostatni", clientConnector.readInfo())
+        if(numPlayers-1-numBots>0) {
+            if (isServer) {
+                serverConnector = ServerConnector(this, setReqCode, 44444, numPlayers - 1 - numBots)
+                //serverConnector.setHotSpot(SSID,password)
+                //serverConnector.startLookingForClients()
+                magic1.setOnClickListener { serverConnector.setHotSpot(SSID, "") }
+                magic2.setOnClickListener { serverConnector.startLookingForClients() }
+            } else {
+                clientConnector = ClientConnector(this, locReqCode, 44444)
+                magic1.setOnClickListener { clientConnector.connectToHotspot(SSID, "") }
+                magic2.setOnClickListener { clientConnector.makeSocketConnection() }
+                //clientConnector.connectToHotspot(SSID,password)
+                //clientConnector.makeSocketConnection()
+                //Log.d("ostatni", clientConnector.readInfo())
+            }
         }
-
         listAdapter = ArrayAdapterPlayers(this, qlist)
         listView.adapter = listAdapter
     }
