@@ -41,7 +41,7 @@ class Coordinator(
     private var currentRound: Int = 0
     private var currentPhase: Int = 0
 
-    private var winners: String = ""
+    private lateinit var winners: List<String>
 
     private var currentPlayerId: Int = 0
     private var dealerId: Int = 0
@@ -128,12 +128,12 @@ class Coordinator(
         hands[1] = Pair(allCards[0], allCards[1])
         hands[2] = Pair(allCards[2], allCards[3])
         table = allCards.subList(4, 9)
-        winners = allCards.subList(10, allCards.size).toString()
+        winners = allCards.subList(10, allCards.size)
         if (maxBots > 0) {
             for (i in 1..maxBots) {
                 playerStatus[i] = 3
             }
-            for (i in maxBots..(maxBots + maxPlayers)) {
+            for (i in (maxBots + 1)..(maxBots + maxPlayers)) {
                 playerStatus[i] = 1
             }
         } else {
@@ -147,12 +147,12 @@ class Coordinator(
         if (maxPlayers == 3) {
             hands[3] = Pair(allCards[4], allCards[5])
             table = allCards.subList(6, 11)
-            winners = allCards.subList(12, allCards.size).toString()
+            winners = allCards.subList(12, allCards.size)
         }
         if (maxPlayers == 4) {
             hands[4] = Pair(allCards[6], allCards[7])
             table = allCards.subList(8, 13)
-            winners = allCards.subList(14, allCards.size).toString()
+            winners = allCards.subList(14, allCards.size)
         }
     }
 
@@ -216,8 +216,40 @@ class Coordinator(
     }
 
     private fun finishGame() {
-        setFinalMessage(1, "WIN")
+        var multipleWinners: List<Int>
+        if (winners[0].contains("=")) {
+            multipleWinners = winners[0].split("=").map { it.toInt() }
+        } else {
+            multipleWinners = mutableListOf(winners[0].toInt())
+        }
+        for (i in 1..playerStatus.size) {
+            if (multipleWinners.contains(i)) {
+                setWinStatus(i)
+            } else {
+                setLostStatus(i)
+            }
+        }
         clear()
+    }
+
+    private fun setLostStatus(playerId: Int) {
+        if (playerStatus[playerId] == 3) {
+            playerStatus[playerId] = 2
+        } else if (playerStatus[playerId] == 1) {
+            playerStatus[playerId] = 0
+        }
+        setFinalMessage(playerId, "W $biddingPool")
+        sendMessage()
+    }
+
+    private fun setWinStatus(playerId: Int) {
+        if (playerStatus[playerId] == 3) {
+            playerStatus[playerId] = 32
+        } else if (playerStatus[playerId] == 1) {
+            playerStatus[playerId] = 12
+        }
+        setFinalMessage(playerId, "L")
+        sendMessage()
     }
 
     private fun clear() {

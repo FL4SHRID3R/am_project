@@ -6,7 +6,13 @@ import org.junit.Test
 class Test {
     @Test
     fun tesd() {
-        val coordinator = Coordinator(100, 50, 4, 0)
+        var coordinator = Coordinator(100, 50, 4, 0)
+        coordinator.roundSwitcher()
+
+        coordinator = Coordinator(100, 50, 0, 4)
+        coordinator.roundSwitcher()
+        
+        coordinator = Coordinator(100, 50, 2, 2)
         coordinator.roundSwitcher()
     }
 }
